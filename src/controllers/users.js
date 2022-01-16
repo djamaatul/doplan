@@ -112,8 +112,15 @@ exports.login = async (req, res) => {
 		return res.status(200).send({
 			status: 'success',
 			data: {
-				id: userExist.id,
 				token,
+				profile: {
+					id: 1,
+					firstName: 'D.',
+					lastName: 'Jamaatul Anbiya',
+					email: 'djamaatul.anbiya@gmail.com',
+					avatar: null,
+					phone: '+6289697823201',
+				},
 			},
 		});
 	} catch (error) {
@@ -124,22 +131,22 @@ exports.login = async (req, res) => {
 	}
 };
 
-exports.getProfile = async (req, res) => {
-	const id = req.user.id;
-	try {
-		const profileData = await users.findOne({
-			where: {
-				id,
-			},
-		});
-		res.status(200).send({
-			status: 'success',
-			data: { ...profileData },
-		});
-	} catch (error) {
-		res.status(500).send({
-			status: 'failed',
-			message: 'get profile server error',
-		});
-	}
-};
+// exports.getProfile = async (req, res) => {
+// 	const id = req.user.id;
+// 	try {
+// 		const profileData = await users.findOne({
+// 			where: {
+// 				id,
+// 			},
+// 		});
+// 		res.status(200).send({
+// 			status: 'success',
+// 			data: { ...profileData },
+// 		});
+// 	} catch (error) {
+// 		res.status(500).send({
+// 			status: 'failed',
+// 			message: 'get profile server error',
+// 		});
+// 	}
+// };

@@ -67,10 +67,11 @@ exports.addPlan = async (req, res) => {
 			title: body.title,
 			body: body?.body ?? '',
 			date: body.date,
+			status: false,
 		});
 		res.status(200).send({
 			status: 'sucess',
-			data: { iduser: id, title: body.title, body: body?.body ?? '', date: body.date },
+			data: { iduser: id, title: body.title, body: body?.body ?? '', date: body.date, status: false },
 		});
 	} catch (error) {
 		return res.status(500).send({
@@ -116,7 +117,7 @@ exports.updatePlan = async (req, res) => {
 	const userid = req.user.id;
 	const id = req.params.id;
 	const body = req.body;
-
+	console.log(body.status);
 	try {
 		const dataPlan = await plans.findOne({
 			where: {
@@ -130,9 +131,10 @@ exports.updatePlan = async (req, res) => {
 			});
 		}
 		const updateData = {
-			title: body.title ? body.title : dataPlan.title,
-			body: body.body ? body.body : dataPlan.body,
-			date: body.date ? body.date : dataPlan.date,
+			title: body?.title ?? dataPlan.title,
+			body: body?.body ?? dataPlan.body,
+			date: body?.date ?? dataPlan.date,
+			status: body?.status ?? dataPlan.status,
 		};
 		await plans.update(updateData, {
 			where: {
