@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 exports.auth = async (req, res, next) => {
 	const authorization = req.header('authorization');
 	if (!authorization) {
-		return res.status(200).send({
+		return res.status(401).send({
 			status: 'failed',
 			message: 'Unauthorization',
 		});
@@ -13,7 +13,7 @@ exports.auth = async (req, res, next) => {
 		const data = jwt.verify(token, process.env.SECRET_KEY);
 		req.user = data;
 	} catch (error) {
-		return res.status(401).send({
+		return res.status(400).send({
 			status: 'failed',
 			message: 'invalid token',
 		});

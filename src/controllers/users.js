@@ -60,6 +60,24 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
 	const body = req.body;
+	const schema = joi.object({
+		email: body.email ?? joi.string().email(),
+		password: joi.string().min(4).required(),
+		phone:
+			body.phone ??
+			joi
+				.string()
+				.min(11)
+				.pattern(/^\+\d+/),
+	});
+	const { error } = schema.validate(body);
+
+	if (error) {
+		return res.status(400).send({
+			status: 'failed',
+			message: error.details[0].message,
+		});
+	}
 	try {
 		const userExist = await users.findOne({
 			where: {
@@ -82,11 +100,12 @@ exports.login = async (req, res) => {
 		const authenticate = await bcrypt.compare(body.password, userExist.password);
 		console.log(body.password, userExist.password);
 
-		if (!authenticate)
+		if (!authenticate) {
 			res.status(401).send({
 				status: 'failed',
 				message: 'email and password combination not match',
 			});
+		}
 
 		const token = jwt.sign({ id: userExist.id }, process.env.SECRET_KEY);
 
@@ -101,6 +120,26 @@ exports.login = async (req, res) => {
 		return res.status(500).send({
 			status: 'failed',
 			message: 'login server error',
+		});
+	}
+};
+
+exports.getProfile = async (req, res) => {
+	const id = req.user.id;
+	try {
+		const profileData = await users.findOne({
+			where: {
+				id,
+			},
+		});
+		res.status(200).send({
+			status: 'success',
+			data: { ...profileData },
+		});
+	} catch (error) {
+		res.status(500).send({
+			status: 'failed',
+			message: 'get profile server error',
 		});
 	}
 };
