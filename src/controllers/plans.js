@@ -144,7 +144,7 @@ exports.updatePlan = async (req, res) => {
 		return res.status(200).send({
 			status: 'success',
 			message: `success updated plan id : ${id}`,
-			data: { id: dataPlan.id, ...updateData },
+			data: { id: dataPlan.id, ...updateData, status: dataPlan.status },
 		});
 	} catch (error) {
 		return res.status(500).send({
