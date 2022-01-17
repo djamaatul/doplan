@@ -7,6 +7,7 @@ const { users } = require('../../models');
 
 exports.register = async (req, res) => {
 	const body = req.body;
+	console.log(body);
 	const schema = joi.object({
 		email: joi.string().email().required(),
 		avatar: joi.string().pattern(/\d+|\w+\.[jpg,jpeg,png,svg,JPG,JPEG,PNG,SVG]+/),
@@ -27,12 +28,12 @@ exports.register = async (req, res) => {
 		});
 	}
 	try {
-		const userExist = await users.findOne({
+		const userExist = await users.findAll({
 			where: {
 				[Op.or]: [{ email: body.email }, { phone: body.phone }],
 			},
 		});
-
+		console.log(userExist);
 		if (userExist.length > 0) {
 			return res.status(400).send({
 				status: 'failed',
@@ -115,11 +116,11 @@ exports.login = async (req, res) => {
 				token,
 				profile: {
 					id: 1,
-					firstName: 'D.',
-					lastName: 'Jamaatul Anbiya',
-					email: 'djamaatul.anbiya@gmail.com',
+					firstName: userExist.firstName,
+					lastName: userExist.lastName,
+					email: userExist.email,
 					avatar: null,
-					phone: '+6289697823201',
+					phone: userExist.phone,
 				},
 			},
 		});
